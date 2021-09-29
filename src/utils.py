@@ -19,8 +19,8 @@ def fill_in_boundary(points, array):
         # draw lines
         x0, y0 = points[i]
         x0, y0 = int(x0), int(x1)
-        x1, y1 = int(x1), int(y1)
         x1, y1 = points[(i+1)%n]
+        x1, y1 = int(x1), int(y1)
         dx = abs(x1 - x0)
         dy = abs(y1 - y0)
         x, y = x0, y0
