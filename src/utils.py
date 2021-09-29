@@ -65,8 +65,8 @@ def output_groudtruth_image_from_json(json_obj):
 def read_json(path):
     truth_dict = dict()
     for filename in os.listdir(path):
-        file_lst = filename.split('.')[-1]
-        if file_lst == 'json':
+        file_lst = filename.split('.')
+        if file_lst[-1] == 'json':
             with open(os.path.join(path, filename)) as json_file:
                 data = json.load(json_file)
                 truth_dict[".".join(file_lst[:-1])] = output_groudtruth_image_from_json(data)
