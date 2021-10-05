@@ -33,7 +33,7 @@ def output_groudtruth_image_from_json(json_obj):
         points = shape["points"]
         truth_image = np.logical_or(fill_in_boundary(points, height, width), truth_image)
 
-    return truth_image
+    return truth_image.T
 
 def read_json(path):
     truth_dict = dict()
