@@ -2,7 +2,7 @@ import os
 import json
 import cv2
 import numpy as np
-from scipy.ndimage import binary_fill_holes
+from matplotlib.path import Path
 
 def load_image_from_dir(path):
   images = []
@@ -13,40 +13,13 @@ def load_image_from_dir(path):
 
   return images
 
-def fill_in_boundary(points, array):
-    n = len(points)
-    for i in range(n):
-        # draw lines
-        x0, y0 = points[i]
-        x0, y0 = int(x0), int(x1)
-        x1, y1 = points[(i+1)%n]
-        x1, y1 = int(x1), int(y1)
-        dx = abs(x1 - x0)
-        dy = abs(y1 - y0)
-        x, y = x0, y0
-        sx = -1 if x0 > x1 else 1
-        sy = -1 if y0 > y1 else 1
-        if dx > dy:
-            err = dx / 2.0
-            while x != x1:
-                array[x, y] = 1
-                err -= dy
-                if err < 0:
-                    y += sy
-                    err += dx
-                x += sx
-        else:
-            err = dy / 2.0
-            while y != y1:
-                array[x, y] = 1
-                err -= dx
-                if err < 0:
-                    x += sx
-                    err += dy
-                y += sy        
-        array[x, y] = 1
+def fill_in_boundary(points, height, width):
+    poly_path = Path(points)
+    x, y = np.mgrid[:height, :width]
+    coord = np.hstack((x.reshape(-1,1), y.reshape(-1,1)))
+    mask = poly_path.contains_points(coord)
 
-    return binary_fill_holes(array)
+    return mask.reshape(height, width)
 
 
 
@@ -58,7 +31,7 @@ def output_groudtruth_image_from_json(json_obj):
     truth_image = np.zeros((height, width), dtype=np.int8)
     for shape in shapes:
         points = shape["points"]
-        truth_image = fill_in_boundary(points, truth_image)
+        truth_image = np.logical_or(fill_in_boundary(points, height, width), truth_image)
 
     return truth_image
 
