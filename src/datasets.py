@@ -32,10 +32,8 @@ class WormDataset(Dataset):
 
     def __getitem__(self, idx):
       feature, label = self.features[idx], self.labels[idx] / 255.
-      feature = F.threshold(255 - feature, 60., 0.)
 
-
-      return torch.unsqueeze(feature / 255., 0), torch.unsqueeze(label, 0)
+      return torch.unsqueeze(1 - feature / 255., 0), torch.unsqueeze(label, 0)
 
 class AugmentedWormDataset(Dataset):
     '''
@@ -62,7 +60,5 @@ class AugmentedWormDataset(Dataset):
 
     def __getitem__(self, idx):
       feature, label = self.features[idx], self.labels[idx] / 255.
-      feature = F.threshold(255 - feature, 60., 0.)
 
-
-      return feature / 255., label
+      return 1 - feature / 255., label

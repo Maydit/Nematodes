@@ -49,24 +49,31 @@ def read_json(path):
     return truth_dict
 
 
-def get_pred_mask(images_dataset, model):
+def get_pred_mask(images_dataset, model, p=4, binary=True, device='cuda:0', output_device='cpu'):
     '''
         images_dataset: WormDataset
         model: trained unet
-        image shape 576x576, 4 continuous pieces combine to original piece
+        p: crop size in 1d
+        binary: if True output binary mask, else sigmoid score
+        image shape 288x288, 16 continuous pieces combine to original piece if p = 4
         output image shape: 1x1x1152x1152
     '''
     pred_masks = []
+    p_sq = p ** 2
+    model = model.to(device)
+    model.eval()
     with torch.no_grad():
-        for i in range(len(images_dataset) // 4):
-        # get list of 4 cropped image
-            image_lst = [images_dataset[i*4 + j][0] for j in range(4)]
+        for i in range(len(images_dataset) // p_sq):
+            # get list of p square cropped image
+            image_lst = [images_dataset[i*p_sq + j][0] for j in range(p_sq)]
             # output from model
-            pred_lst = [model(torch.unsqueeze(img, 0)) for img in image_lst]
+            if binary:
+                pred_lst = [torch.sigmoid(model(torch.unsqueeze(img.to(device), 0))) > 0.5 for img in image_lst]
+            else:
+                pred_lst = [torch.sigmoid(model(torch.unsqueeze(img.to(device), 0))) for img in image_lst]
             # concat to one, each piece shape 1x1xHxW
-            top_two = torch.cat(pred_lst[:2], dim=3)
-            down_two = torch.cat(pred_lst[2:], dim=3)
-            pred_masks.append(torch.cat((top_two, down_two), dim=2))
+            tensor_tuple = [torch.cat(pred_lst[i:(i+p)], dim=3) for i in range(0,p_sq,p)]
+            pred_masks.append(torch.cat(tensor_tuple, dim=2).to(output_device))
 
     return pred_masks
 
