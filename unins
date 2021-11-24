@@ -1,0 +1,98 @@
+appdirs==1.4.4
+argon2-cffi @ file:///C:/ci/argon2-cffi_1613037869401/work
+asn1crypto @ file:///home/conda/feedstock_root/build_artifacts/asn1crypto_1595949944546/work
+astroid==2.2.5
+attrs @ file:///tmp/build/80754af9/attrs_1620827162558/work
+backcall @ file:///home/conda/feedstock_root/build_artifacts/backcall_1592338393461/work
+backports.functools-lru-cache==1.6.1
+beautifulsoup4==4.8.2
+bleach @ file:///home/conda/feedstock_root/build_artifacts/bleach_1588608214987/work
+brotlipy==0.7.0
+certifi==2021.5.30
+cffi @ file:///C:/ci/cffi_1625831756778/work
+chardet @ file:///C:/ci/chardet_1605296577955/work
+colorama==0.4.3
+conda==4.5.11
+cryptography @ file:///C:/ci/cryptography_1633520531101/work
+cryptography-vectors @ file:///tmp/build/80754af9/cryptography-vectors_1633518052777/work
+cycler==0.10.0
+decorator==5.1.0
+defusedxml==0.6.0
+entrypoints==0.3
+HeapDict==1.0.0
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1593328102638/work
+imageio==2.9.0
+importlib-metadata @ file:///C:/ci/importlib-metadata_1631916826748/work
+ipykernel==5.5.6
+ipython @ file:///C:/ci/ipython_1632141520241/work
+ipython-genutils==0.2.0
+isort==4.3.17
+jedi @ file:///C:/ci/jedi_1608915217731/work
+Jinja2==2.11.2
+joblib==0.14.1
+jsonschema @ file:///Users/ktietz/demo/mc3/conda-bld/jsonschema_1630511932244/work
+jupyter-client @ file:///tmp/build/80754af9/jupyter_client_1630690655192/work
+jupyter-core @ file:///C:/ci/jupyter_core_1633420716440/work
+lazy-object-proxy==1.3.1
+MarkupSafe @ file:///C:/ci/markupsafe_1621528502553/work
+matplotlib==2.1.2
+matplotlib-inline @ file:///tmp/build/80754af9/matplotlib-inline_1628242447089/work
+mccabe==0.6.1
+menuinst @ file:///C:/ci/menuinst_1631733438520/work
+mistune @ file:///C:/ci/mistune_1607359457024/work
+moviepy==0.2.3.2
+mrjob==0.7.4
+nbconvert==5.6.0
+nbformat @ file:///home/conda/feedstock_root/build_artifacts/nbformat_1594060262917/work
+nest-asyncio @ file:///tmp/build/80754af9/nest-asyncio_1613680548246/work
+networkx==2.4
+notebook @ file:///C:/ci/notebook_1629205890343/work
+numpy==1.21.2
+olefile @ file:///Users/ktietz/demo/mc3/conda-bld/olefile_1629805411829/work
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1589925210001/work
+pandocfilters==1.4.2
+parso @ file:///home/conda/feedstock_root/build_artifacts/parso_1595548966091/work
+pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+Pillow @ file:///C:/ci/pillow_1625670741008/work
+prometheus-client @ file:///home/conda/feedstock_root/build_artifacts/prometheus_client_1590412252446/work
+prompt-toolkit @ file:///home/ktietz/src/ci/prompt-toolkit_1611930248499/work
+pycosat==0.6.3
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1593275161868/work
+pycrypto @ file:///C:/ci/pycrypto_1608509472317/work
+Pygments==2.10.0
+pylint==2.3.1
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1608057966937/work
+pyparsing==2.4.7
+pyrsistent @ file:///C:/ci/pyrsistent_1625052426389/work
+PySocks @ file:///C:/ci/pysocks_1605307512533/work
+python-dateutil==2.8.1
+pytz==2017.3
+PyWavelets==1.1.1
+pywin32==301
+pywinpty @ file:///C:/ci/pywinpty_1607419945780/work
+PyYAML==5.4.1
+pyzmq @ file:///C:/ci/pyzmq_1628276105793/work
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1592425495151/work
+ruamel-yaml-conda @ file:///C:/ci/ruamel_yaml_1616016898638/work
+scikit-image==0.18.3
+scikit-learn==0.22.2.post1
+scipy==1.4.1
+Send2Trash==1.5.0
+simplegeneric==0.8.1
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1590081179328/work
+soupsieve==1.9.5
+terminado==0.9.4
+testpath==0.4.4
+tifffile==2021.8.30
+tornado @ file:///C:/ci/tornado_1606924294691/work
+tqdm==4.11.2
+traitlets @ file:///tmp/build/80754af9/traitlets_1632522747050/work
+typed-ast==1.3.5
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1595434816409/work
+wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_1595859607677/work
+webencodings==0.5.1
+win-inet-pton @ file:///C:/ci/win_inet_pton_1605306162074/work
+win-unicode-console==0.5
+wincertstore==0.2
+wrapt==1.11.1
+zipp @ file:///tmp/build/80754af9/zipp_1633618647012/work
