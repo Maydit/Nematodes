@@ -49,7 +49,7 @@ def MaskToConnectAndLoc(mask):
     submask = np.array(labels, dtype=np.uint8)
     submask[label == labels] = 255
     bmaskList.append(submask)
-    areas.append(np.sum(submask))
+    areas.append(int(np.sum(submask)))
   return bmaskList, centroids[1:].astype(int).tolist(), areas
 
 def ConnectToCount(mask):
@@ -207,6 +207,7 @@ def PathToCSV(inFilepath, outFilepath, verbose=0):
           filePath = os.path.join(tempPath, subdir, origFilename)
           origFilename = origFilename.split("/")[-1]
           newFilename = dir + '/' + origFilename[:-5] + '.csv' #remove tiff and make csv
+          print(total_counted, newFilename)
           currCount = SinglePathToCSV(filePath, newFilename, verbose)
           df = df.append({'filename': origFilename, 'count': currCount}, ignore_index=True)
   #print it to csv
