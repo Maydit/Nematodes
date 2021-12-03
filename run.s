@@ -8,5 +8,5 @@
 #SBATCH --mem=64GB
 
 module purge;
-source ../venv/bin/activate;
-python wormcounter.py ./img/"Sample Image.tiff" ./img/SI.csv --verbose
+source ./venv/bin/activate;
+python wormcounter.py $1 $2 $3
