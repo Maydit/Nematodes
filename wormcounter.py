@@ -168,6 +168,7 @@ def SinglePathToCSV(inPath, outPath, verbose=0):
   device = 'cpu'
   if torch.cuda.is_available():
     device = 'cuda'
+  print(f"Using device {device}")
   csv, imgBitmask = ImageToCSV(image, device, verbose)
   if verbose > 0:
     with open(outPath, 'w+', newline='\n') as file:
