@@ -2,6 +2,8 @@ To activate the pip environment:
 
 python3.8 -m venv venv
 source ./venv/bin/activate
+[OPTIONAL if wheel build takes too long
+TODO]
 pip install -r requirements.txt
 
 To see help for running the python script:
