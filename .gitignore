@@ -4,3 +4,4 @@ data/
 *.err
 *.out
 /venv/*
+*.csv
