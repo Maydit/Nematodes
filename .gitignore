@@ -1,3 +1,6 @@
 img/*/
 data/
 .*
+*.err
+*.out
+/venv/*
