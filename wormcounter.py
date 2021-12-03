@@ -42,13 +42,15 @@ def MaskToConnectAndLoc(mask):
   contain one fully connected component and a list of locations corresponding
   to a point within the fully connected component."""
   bmaskList = []
+  areas = []
   #connectedComponents expects uint8 array
   ret, labels, _, centroids = cv2.connectedComponentsWithStats(mask)
   for label in range(1, ret):
     submask = np.array(labels, dtype=np.uint8)
     submask[label == labels] = 255
     bmaskList.append(submask)
-  return bmaskList, centroids[1:].astype(int).tolist()
+    areas.append(np.sum(submask))
+  return bmaskList, centroids[1:].astype(int).tolist(), areas
 
 def ConnectToCount(mask):
   """Take a bitmask image that has one fully connected component and determine
@@ -146,14 +148,15 @@ def ImageToCSV(image, device, verbose=0):
   [centroid location, worm count]. The first row will have 
   [Total, the total count]."""
   imgBitmask = ImageToMask(image, device).numpy().astype(np.uint8)
-  fccs, locs = MaskToConnectAndLoc(imgBitmask)
+  fccs, locs, areas = MaskToConnectAndLoc(imgBitmask)
   counts = []
   for fcc in fccs:
     counts.append(ConnectToCount(fcc))
   counts.insert(0, sum(counts))
   counts = [int(i) for i in counts]
   locs.insert(0, 'Total')
-  df = pd.DataFrame(data = {'Location': locs, 'Count': counts})
+  areas.insert(0, sum(areas))
+  df = pd.DataFrame(data = {'Location': locs, 'Count': counts, 'Area': areas})
   return df.to_csv(index=False, quoting=csv.QUOTE_NONNUMERIC), imgBitmask
 
 def SinglePathToCSV(inPath, outPath, verbose=0):
@@ -168,7 +171,6 @@ def SinglePathToCSV(inPath, outPath, verbose=0):
   device = 'cpu'
   if torch.cuda.is_available():
     device = 'cuda'
-  print(f"Using device {device}")
   csv, imgBitmask = ImageToCSV(image, device, verbose)
   if verbose > 0:
     with open(outPath, 'w+', newline='\n') as file:
@@ -230,4 +232,5 @@ if __name__ == "__main__":
   parser.add_argument('outFile', help="Output file location, expects .csv")
   parser.add_argument('-v', '--verbose', dest='verbose', action="count", default=0, help="Indicates to make a .csv file for each .tiff within the .tar.gz. Does nothing for a .tiff input.")
   args = parser.parse_args()
+  print(args)
   print(DynamicConvert(args.inFile, args.outFile, args.verbose))
