@@ -4,8 +4,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --output=wormcounter.out
 #SBATCH --error=wormcounter.err
-#SBATCH --partition=v100
-#SBATCH --mem=64GB
+#SBATCH --mem=16GB
 
 module purge;
 source ./venv/bin/activate;
