@@ -23,6 +23,12 @@ import csv
 import re
 import tempfile
 
+from skimage.segmentation import watershed
+from skimage.morphology import skeletonize
+from scipy import ndimage as ndi
+from skimage.feature import peak_local_max
+from scipy.signal import convolve2d
+
 progDesc = """Convert a .tiff file into a .csv with worm counts or a .tar.gz file into a .csv of worm counts.
 Prints the number of worms counted for a .tiff or the number of files counted for a .tar.gz.
 Expects 2 arguments: the file path to take in the form of .tiff or .tar.gz and the file path to put out the .csv
@@ -52,41 +58,35 @@ def MaskToConnectAndLoc(mask):
     areas.append(int(np.sum(submask)))
   return bmaskList, centroids[1:].astype(int).tolist(), areas
 
+def watershed_count(image):
+  distance = ndi.distance_transform_edt(image)
+  coords = peak_local_max(distance, labels=image)
+  mask = np.zeros(distance.shape, dtype=bool)
+  mask[tuple(coords.T)] = True
+  markers, _ = ndi.label(mask)
+  labels = watershed(-distance, markers, mask=image)
+  return len(np.unique(labels))
+
+def thin_kernal_count(image):
+  image = skeletonize(image)
+  # apply 3x3 kernal sum
+  kernalized_image = convolve2d(image, np.ones((3,3), dtype=np.int8), mode='same', boundary='fill') == 2
+  head_tail = np.logical_and(image, kernalized_image)
+  # entry with value 2 is head or tail
+  count = np.ceil(head_tail.sum() / 2)
+  return count
+
+def thresholding(img):
+  thresh = 4482
+  area = np.sum(img)
+  if area > thresh:
+    return watershed_count(img)
+  return thin_kernal_count(img)
+
 def ConnectToCount(mask):
   """Take a bitmask image that has one fully connected component and determine
   the count of worms in it."""
-  #TODO!
-  area = np.sum(mask)
-  thresh = 0
-  if area > thresh:
-    #calc worms based on area
-    return area//100
-  else:
-    #skeletonize head tail method
-    return 0
-
-#irrelevant with current approach
-class CountDataset(Dataset):
-  """Dataset for a single image with a single worm."""
-  def __init__(self, image):
-    self.image = torch.from_numpy(image)
-  def __len__(self):
-    return 1
-  def __getitem__(self, idx):
-    return self.image
-
-#irrelevant with current approach
-def ConnectToDataset(mask):
-  """Take a bitmask image that has one fully connected component and convert it
-  to a pytorch Dataset."""
-  return CountDataset(mask)
-
-#irrelevant with current approach
-def DatasetToCount(dataset, model):
-  """Take a componentDataset datapoint and get the count of worms it has."""
-  datapoint = torch.unsqueeze(dataset[0], 0)
-  with torch.no_grad():
-    return model(datapoint).squeeze(0)
+  return thresholding(mask)
 
 def ReconstructMask(masklist, origShape):
   """Turn a collection of mask subimages into the whole image
@@ -149,14 +149,10 @@ def ImageToCSV(image, device, verbose=0):
   [Total, the total count]."""
   imgBitmask = ImageToMask(image, device).numpy().astype(np.uint8)
   fccs, locs, areas = MaskToConnectAndLoc(imgBitmask)
-  counts = []
-  for fcc in fccs:
-    counts.append(ConnectToCount(fcc))
-  counts.insert(0, sum(counts))
-  counts = [int(i) for i in counts]
+  totalWorms = ConnectToCount(imgBitmask)
   locs.insert(0, 'Total')
   areas.insert(0, sum(areas))
-  df = pd.DataFrame(data = {'Location': locs, 'Count': counts, 'Area': areas})
+  df = pd.DataFrame(data = {'Total worms': totalWorms, 'Location': locs, 'Area': areas})
   return df.to_csv(index=False, quoting=csv.QUOTE_NONNUMERIC), imgBitmask
 
 def SinglePathToCSV(inPath, outPath, verbose=0):
