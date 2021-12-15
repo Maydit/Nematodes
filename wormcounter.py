@@ -22,6 +22,7 @@ import math
 import csv
 import re
 import tempfile
+import time
 
 from skimage.segmentation import watershed
 from skimage.morphology import skeletonize
@@ -123,14 +124,14 @@ def ImageToDataset(image):
   so we split the image into subimages."""
   return MaskDataset(image)
 
-def DatasetToMask(dataset, model):
+def DatasetToMask(dataset, model, device):
   """Take the maskDataset datapoints and get the image bitmask that defines
   the worms in it. This bitmask is a list of the datapoints' results in the same order."""
   dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1)
   masklist = []
   with torch.no_grad():
     for item in dataloader:
-      masklist.append((torch.sigmoid(model(item)) > 0.5).squeeze(0)) #the model returns a sigmoid but we want a bitmask
+      masklist.append((torch.sigmoid(model(item.to(device))) > 0.5).squeeze(0)) #the model returns a sigmoid but we want a bitmask
   return masklist
 
 def ImageToMask(image, device):
@@ -139,8 +140,12 @@ def ImageToMask(image, device):
   dataset = ImageToDataset(image)
   imgToMask = smp.Linknet(in_channels=1, encoder_weights=None)
   imgToMask.load_state_dict(torch.load('linknet_resnet34_288.pt', map_location=torch.device(device)))
+  imgToMask.to(device)
   imgToMask.eval()
-  results = DatasetToMask(dataset, imgToMask)
+  optimtime = time.time()
+  results = DatasetToMask(dataset, imgToMask, device)
+  resulttime = time.time()
+  print("Time taken to evaluate NN:", resulttime - optimtime)
   return ReconstructMask(results, image.shape)
 
 def ImageToCSV(image, device, verbose=0):
@@ -203,11 +208,12 @@ def PathToCSV(inFilepath, outFilepath, verbose=0):
           filePath = os.path.join(tempPath, subdir, origFilename)
           origFilename = origFilename.split("/")[-1]
           newFilename = dir + '/' + origFilename[:-5] + '.csv' #remove tiff and make csv
-          print(total_counted, newFilename)
           currCount = SinglePathToCSV(filePath, newFilename, verbose)
+          print(currCount, newFilename)
           df = df.append({'filename': origFilename, 'count': currCount}, ignore_index=True)
-  #print it to csv
-  df.to_csv(outFilepath, index=False)
+          df.sort_values('filename', ascending=True, inplace=True)
+          #print it to csv
+          df.to_csv(outFilepath, index=False)
   return total_counted
 
 def DynamicConvert(inFilepath, outFilepath, verbose=0):
