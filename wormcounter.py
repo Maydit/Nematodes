@@ -22,7 +22,6 @@ import math
 import csv
 import re
 import tempfile
-import time
 
 from skimage.segmentation import watershed
 from skimage.morphology import skeletonize
@@ -142,17 +141,14 @@ def ImageToMask(image, device):
   imgToMask.load_state_dict(torch.load('linknet_resnet34_288.pt', map_location=torch.device(device)))
   imgToMask.to(device)
   imgToMask.eval()
-  optimtime = time.time()
   results = DatasetToMask(dataset, imgToMask, device)
-  resulttime = time.time()
-  print("Time taken to evaluate NN:", resulttime - optimtime)
   return ReconstructMask(results, image.shape)
 
 def ImageToCSV(image, device, verbose=0):
   """Take a worm image and convert it to a CSV with the following fields
   [centroid location, worm count]. The first row will have 
   [Total, the total count]."""
-  imgBitmask = ImageToMask(image, device).numpy().astype(np.uint8)
+  imgBitmask = ImageToMask(image, device).cpu().numpy().astype(np.uint8)
   fccs, locs, areas = MaskToConnectAndLoc(imgBitmask)
   totalWorms = ConnectToCount(imgBitmask)
   locs.insert(0, 'Total')
