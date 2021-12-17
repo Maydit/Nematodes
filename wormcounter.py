@@ -103,7 +103,7 @@ def EqualCrop(feature, height, width):
     feature = torch.from_numpy(feature)
     newh = math.ceil(feature.shape[0] / height) * height
     neww = math.ceil(feature.shape[1] / width) * width
-    feature = torchvision.transforms.Pad(padding = (0, 0, newh, neww), fill = 255)(feature)
+    feature = torchvision.transforms.Pad(padding = (0, 0, neww - feature.shape[1], newh - feature.shape[0]), fill = 255)(feature)
     features = [torchvision.transforms.functional.crop(feature, i, j, height, width) for i in range(0, feature.shape[0], height) for j in range(0, feature.shape[1], width)]
     return features
 
