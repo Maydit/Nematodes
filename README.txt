@@ -30,7 +30,6 @@ After the first time setup:
 
 cd Nematodes
 
-source ./venv/bin/activate
 sbatch run.s .......
 
 Sidenote: as a consequence of untarring this WILL NOT work with files inside a .tar.gz that have ._ in their name.
